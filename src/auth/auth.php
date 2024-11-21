@@ -1,24 +1,42 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
-require_once "./src/db/database_functions.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Proyectos/gestion_restaurante/src/db/database_functions.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $email = $_POST['user'];
-  $password = $_POST['passwd'];
+$user = $_POST['user'] ?? '';
+$passwd = $_POST['passwd'] ?? '';
 
-  $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-  $stmt->execute([$email]);
-  $user = $stmt->fetch();
+if (empty($user) || empty($passwd)) {
+  header("Location: /Proyectos/gestion_restaurante/index.php?error=1");
+  exit();
+}
 
-  if ($user && password_verify($password, $user['password'])) {
+try {
+  $conn = createConnection();
+
+  $stmt = $conn->prepare("SELECT * FROM usuarios WHERE email = :email AND password = MD5(:password)");
+  $stmt->bindParam(':email', $user);
+  $stmt->bindParam(':password', $passwd);
+  $stmt->execute();
+  $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  if ($usuario) {
+    // Crear sesión si el usuario es válido
     $_SESSION['user'] = [
-      'email' => $user['email'],
-      'code' => $user['user_code']
+      'email' => $usuario['email'],
+      'codigo' => $usuario['codigo']
     ];
-    $_SESSION['cart'] = [];
-    header('Location: dashboard.php');
+    $_SESSION['cart'] = []; // Inicializar carrito
+    header("Location: /Proyectos/gestion_restaurante/src/pages/lista.php"); // Redirige a lista.php
     exit();
   } else {
-    $error = "Usuario o contraseña incorrectos.";
+    // Credenciales inválidas
+    header("Location: /Proyectos/gestion_restaurante/index.php?error=1"); // Redirige con error
+    exit();
   }
+} catch (PDOException $e) {
+  echo "Error: " . $e->getMessage();
+  exit();
 }

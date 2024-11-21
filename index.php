@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (isset($_SESSION['user'])) {
+  header("Location: lista.php");
+  exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,7 +22,7 @@
   <div class="card shadow p-4" style="width: 22rem;">
     <div class="card-body">
       <h5 class="card-title text-center mb-4">Iniciar Sesión</h5>
-      <form>
+      <form action="/Proyectos/gestion_restaurante/src/auth/auth.php" method="POST">
         <div class="mb-3">
           <label for="user" class="form-label">Usuario</label>
           <input name="user" id="user" type="text" class="form-control" required>
