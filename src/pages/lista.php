@@ -1,5 +1,13 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
+
+require_once __DIR__ . '/../db/database_functions.php';
+
+$cartCount = isset($_SESSION['cart']) ? array_sum(array_column($_SESSION['cart'], 'cantidad')) : 0;
 
 if (!isset($_SESSION['user'])) {
   header("Location: /Proyectos/gestion_restaurante/index.php");
@@ -17,13 +25,74 @@ $user = $_SESSION['user'];
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lista de categorías</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <style>
+    .content {
+      min-height: 100vh;
+    }
+  </style>
 </head>
 
-<body>
-  <header class="container-fluid pt-3 pb-3 d-flex flex-row justify-content-evenly shadow-sm text-white" style="background-color: #6a329f;">
+<body class="d-flex flex-column">
+
+  <header class="container-fluid pt-3 pb-3 d-flex flex-row justify-content-center gap-4 align-items-center shadow-sm text-white"
+    style="background-color: #6a329f;">
     <h3>Usuario: <?php echo htmlspecialchars($user['email']); ?></h3>
-    <a href="/Proyectos/gestion_restaurante/src/auth/logout.php" class="btn text-black" style="background-color: #b4a7d6;">Cerrar Sesión</a>
+    <a href="/Proyectos/gestion_restaurante/src/pages/carrito.php" class="btn text-black position-relative" style="background-color: #b4a7d6;">
+      <i class="bi bi-cart"></i> Carrito
+      <?php if ($cartCount > 0): ?>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          <?php echo $cartCount; ?>
+        </span>
+      <?php endif; ?>
+    </a>
+    <a href="/Proyectos/gestion_restaurante/src/pages/lista.php" class="btn text-black" style="background-color: #b4a7d6;">Categorías</a>
+    <a href="/Proyectos/gestion_restaurante/src/auth/logout.php" class="btn text-black" style="background-color: #b4a7d6;">Cerrar
+      Sesión</a>
   </header>
+
+  <main class="content flex-grow-1 m-4">
+    <?php
+    $conn = createConnection();
+
+    if ($conn === null) {
+      echo "Fallo en la conexión.";
+      exit();
+    }
+
+    $categorias = seleccionarCategorias($conn);
+
+    if ($categorias !== null) {
+      echo '<div class="container mt-4">';
+      echo '<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">';
+
+      foreach ($categorias as $categoria) {
+        $codigo = htmlspecialchars($categoria['Codigo']);
+        $nombre = htmlspecialchars($categoria['Nombre']);
+        $descripcion = htmlspecialchars($categoria['Descripcion']);
+
+        echo '
+          <div class="col">
+            <a href="productos.php?codigo=' . $codigo . '" class="text-decoration-none">
+              <div class="card shadow-sm h-100">
+                <div class="card-body">
+                  <h5 class="card-title text-dark">Nombre: ' . $nombre . '</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">Código: ' . $codigo . '</h6>
+                  <p class="card-text text-dark">Descripción: ' . $descripcion . '</p>
+                </div>
+              </div>
+            </a>
+          </div>';
+      }
+      echo '</div></div>';
+    } else {
+      echo '<p class="text-center text-muted mt-4">No se pudieron cargar las categorías.</p>';
+    }
+    ?>
+  </main>
+
+  <footer class="container-fluid d-flex justify-content-center align-items-center pt-3 pb-3 shadow-sm text-white" style="background-color: #6a329f;">
+    <a href="https://github.com/PinkBlure" class="text-white text-decoration-none">@PinkBlure</a>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

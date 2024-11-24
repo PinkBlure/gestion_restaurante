@@ -23,17 +23,15 @@ try {
   $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
   if ($usuario) {
-    // Crear sesión si el usuario es válido
     $_SESSION['user'] = [
       'email' => $usuario['email'],
       'codigo' => $usuario['codigo']
     ];
-    $_SESSION['cart'] = []; // Inicializar carrito
-    header("Location: /Proyectos/gestion_restaurante/src/pages/lista.php"); // Redirige a lista.php
+    $_SESSION['cart'] = [];
+    header("Location: /Proyectos/gestion_restaurante/src/pages/lista.php");
     exit();
   } else {
-    // Credenciales inválidas
-    header("Location: /Proyectos/gestion_restaurante/index.php?error=1"); // Redirige con error
+    header("Location: /Proyectos/gestion_restaurante/index.php?error=1");
     exit();
   }
 } catch (PDOException $e) {
