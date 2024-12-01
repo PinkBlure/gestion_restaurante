@@ -50,14 +50,14 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Proyectos/gestion_restaurante/src/db/
       Sesión</a>
   </header>
 
-  <main class="content flex-grow-1 m-4">
-    <h1>Carrito de Compras</h1>
+  <main class="content m-auto" style="max-width: 80%; padding: 20px;">
+    <h1 class="text-center mb-4">Carrito de Compras</h1>
 
     <?php if (empty($_SESSION['cart'])): ?>
-      <p>No tienes productos en tu carrito.</p>
+      <p class="text-center">No tienes productos en tu carrito.</p>
     <?php else: ?>
-      <div class="container mt-5">
-        <div class="row">
+      <div class="container">
+        <div class="row g-4">
           <?php
           $conn = createConnection();
 
@@ -79,16 +79,20 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Proyectos/gestion_restaurante/src/db/
               $cantidad = $producto['cantidad'];
 
               echo "
-              <div class='col-md-4 mb-4'>
-                <div class='card'>
-                  <div class='card-body'>
-                    <h5 class='card-title'>{$nombre}</h5>
+              <div class='col-12 col-md-6 col-lg-4'>
+                <div class='card h-100 shadow-sm'>
+                  <div class='card-body text-center'>
+                    <h5 class='card-title mb-3'>{$nombre}</h5>
                     <p class='card-text'>{$descripcion}</p>
                     <p><strong>Cantidad:</strong> {$cantidad}</p>
                   </div>
                   <div class='card-footer'>
-                    <form action='/Proyectos/gestion_restaurante/src/cart/eliminaCarrito.php' method='POST'>
+                    <form action='/Proyectos/gestion_restaurante/src/cart/eliminaCarrito.php' method='POST' class='d-flex flex-column align-items-center'>
                       <input type='hidden' name='codigoProducto' value='{$codigoProducto}'>
+                      <div class='mb-2 d-flex flex-column align-items-center'>
+                        <label for='cantidadEliminar{$codigoProducto}' class='form-label mb-2'><strong>Eliminar cantidad:</strong></label>
+                        <input type='number' id='cantidadEliminar{$codigoProducto}' name='cantidadEliminar' class='form-control w-auto' min='1' max='{$cantidad}' value='1' required>
+                      </div>
                       <button type='submit' class='btn btn-danger btn-sm'>Eliminar del carrito</button>
                     </form>
                   </div>
@@ -98,24 +102,20 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Proyectos/gestion_restaurante/src/db/
           }
 
           echo "</div>";
-
-          if ($total > 0) {
-            echo "
-            <div class='mt-4'>
-              <a href='/Proyectos/gestion_restaurante/src/pages/proceder_pago.php' class='btn btn-success'>Proceder al pago</a>
-            </div>";
-          }
-
           ?>
+
+          <div class="mt-4 text-center">
+            <a href="/Proyectos/gestion_restaurante/src/pages/proceder_pago.php" class="btn btn-success">Proceder al pago</a>
+          </div>
+
+          <div class="mt-4 text-center">
+            <form action="/Proyectos/gestion_restaurante/src/cart/vaciarCarrito.php" method="POST">
+              <button type="submit" class="btn btn-danger">Vaciar carrito</button>
+            </form>
+          </div>
         </div>
       </div>
     <?php endif; ?>
-
-    <div class="mt-4">
-      <form action="/Proyectos/gestion_restaurante/src/cart/vaciarCarrito.php" method="POST">
-        <button type="submit" class="btn btn-danger">Vaciar carrito</button>
-      </form>
-    </div>
   </main>
 
   <footer class="container-fluid d-flex justify-content-center align-items-center pt-3 pb-3 shadow-sm text-white"

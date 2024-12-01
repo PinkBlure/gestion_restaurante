@@ -11,9 +11,15 @@ if (!isset($_SESSION['user'])) {
   exit();
 }
 
-if (isset($_POST['codigoProducto'])) {
+if (isset($_POST['codigoProducto'], $_POST['cantidad'])) {
   $codigoProducto = $_POST['codigoProducto'];
   $codigoCategoria = $_POST['codigoCategoria'];
+  $cantidadSolicitada = (int)$_POST['cantidad'];
+
+  if ($cantidadSolicitada <= 0) {
+    echo "La cantidad solicitada no es válida.";
+    exit();
+  }
 
   $conn = createConnection();
   if ($conn === null) {
@@ -29,26 +35,28 @@ if (isset($_POST['codigoProducto'])) {
   if ($producto) {
     $cantidadStock = $producto['CantidadStock'];
 
-    if ($cantidadStock > 0) {
+    if ($cantidadStock >= $cantidadSolicitada) {
       if (!isset($_SESSION['cart'])) {
         $_SESSION['cart'] = [];
       }
 
       if (isset($_SESSION['cart'][$codigoProducto])) {
-        if ($_SESSION['cart'][$codigoProducto]['cantidad'] < $cantidadStock) {
-          $_SESSION['cart'][$codigoProducto]['cantidad']++;
+        $totalCantidadEnCarrito = $_SESSION['cart'][$codigoProducto]['cantidad'] + $cantidadSolicitada;
+
+        if ($totalCantidadEnCarrito <= $cantidadStock) {
+          $_SESSION['cart'][$codigoProducto]['cantidad'] += $cantidadSolicitada;
         } else {
-          echo "No hay suficiente stock disponible.";
+          echo "No hay suficiente stock disponible para agregar esa cantidad.";
           exit();
         }
       } else {
         $_SESSION['cart'][$codigoProducto] = [
           'codigo' => $codigoProducto,
-          'cantidad' => 1
+          'cantidad' => $cantidadSolicitada
         ];
       }
 
-      $nuevoStock = $cantidadStock - 1;
+      $nuevoStock = $cantidadStock - $cantidadSolicitada;
       $updateStmt = $conn->prepare("UPDATE Producto SET CantidadStock = :nuevoStock WHERE Codigo = :codigo");
       $updateStmt->bindParam(':nuevoStock', $nuevoStock, PDO::PARAM_INT);
       $updateStmt->bindParam(':codigo', $codigoProducto, PDO::PARAM_INT);
@@ -63,8 +71,8 @@ if (isset($_POST['codigoProducto'])) {
   } else {
     echo "Producto no encontrado.";
     exit();
-}
+  }
 } else {
-  echo "Error: No se ha recibido un código de producto.";
+  echo "Error: No se ha recibido un código de producto o una cantidad.";
   exit();
 }

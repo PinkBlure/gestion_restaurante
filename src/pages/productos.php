@@ -57,7 +57,7 @@ if (isset($_GET['codigo'])) {
       Sesión</a>
   </header>
 
-  <main class="content flex-grow-1 m-4">
+  <main class="content m-auto" style="max-width: 80%; padding: 20px;">
     <?php
     $conn = createConnection();
 
@@ -73,7 +73,7 @@ if (isset($_GET['codigo'])) {
       $categoria = $stmt->fetch(PDO::FETCH_ASSOC);
 
       if ($categoria) {
-        echo "<h1 class='text-left'>Productos de la categoría: <strong>" . htmlspecialchars($categoria['Nombre']) . "</strong></h1>";
+        echo "<h1 class='text-center mb-4'>Productos de la categoría: <strong>" . htmlspecialchars($categoria['Nombre']) . "</strong></h1>";
       }
     } catch (PDOException $ex) {
       echo "Error al obtener la categoría: " . htmlspecialchars($ex->getMessage());
@@ -82,8 +82,8 @@ if (isset($_GET['codigo'])) {
     $productos = seleccionarProductos($conn, $codigoCategoria);
 
     if ($productos) {
-      echo "<div class='container mt-5'>";
-      echo "<div class='row'>";
+      echo "<div class='container'>";
+      echo "<div class='row g-4'>";
 
       foreach ($productos as $producto) {
         $codigo = htmlspecialchars($producto['Codigo']);
@@ -93,30 +93,34 @@ if (isset($_GET['codigo'])) {
         $cantidadStock = htmlspecialchars($producto['CantidadStock']);
 
         echo "
-          <div class='col-md-4 mb-4'>
-              <div class='card h-100'>
-                  <div class='card-body'>
-                      <h5 class='card-title'>{$nombre}</h5>
-                      <p class='card-text'>{$descripcion}</p>
-                      <p><strong>Peso:</strong> {$peso} g</p>
-                      <p><strong>Stock:</strong> {$cantidadStock} unidades</p>
-                  </div>
-                  <div class='card-footer d-flex flex-row justify-content-evenly align-items-center'>
-                      <small class='text-muted'>Código: {$codigo}</small>
-                      <form action='/Proyectos/gestion_restaurante/src/cart/agregarCarrito.php' method='POST'>
-                        <input type='hidden' name='codigoProducto' value='{$codigo}'>
-                        <input type='hidden' name='codigoCategoria' value='{$codigoCategoria}'>
-                        <button type='submit' class='btn btn-primary btn-sm'>Añadir al carrito</button>
-                      </form>
-                  </div>
-              </div>
-          </div>";
+        <div class='col-12 col-md-6 col-lg-4'>
+          <div class='card h-100 shadow-sm'>
+            <div class='card-body text-center'>
+              <h5 class='card-title mb-3'>{$nombre}</h5>
+              <p class='card-text'>{$descripcion}</p>
+              <p><strong>Peso:</strong> {$peso} g</p>
+              <p><strong>Stock:</strong> {$cantidadStock} unidades</p>
+              <small class='text-muted'>Código: {$codigo}</small>
+            </div>
+            <div class='card-footer text-center'>
+              <form action='/Proyectos/gestion_restaurante/src/cart/agregarCarrito.php' method='POST' class='d-flex flex-column align-items-center'>
+                <input type='hidden' name='codigoProducto' value='{$codigo}'>
+                <input type='hidden' name='codigoCategoria' value='{$codigoCategoria}'>
+                <div class='mb-2'>
+                  <label for='cantidad{$codigo}' class='form-label'><strong>Cantidad:</strong></label>
+                  <input type='number' id='cantidad{$codigo}' name='cantidad' class='form-control' value='1' min='1' max='{$cantidadStock}' required style='width: 80px;'>
+                </div>
+                <button type='submit' class='btn btn-primary btn-sm'>Añadir al carrito</button>
+              </form>
+            </div>
+          </div>
+        </div>";
       }
 
       echo "</div>";
       echo "</div>";
     } else {
-      echo "<p>No se encontraron productos para esta categoría.</p>";
+      echo "<p class='text-center'>No se encontraron productos para esta categoría.</p>";
     }
     ?>
   </main>
