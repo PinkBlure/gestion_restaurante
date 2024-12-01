@@ -81,7 +81,7 @@ $productos = $stmt_productos->fetchAll(PDO::FETCH_ASSOC);
 
   <main class="content flex-grow-1 m-4">
     <div class="container mt-4">
-    <h1 class='text-center mb-4'>Productos del Pedido #<?php echo $id_pedido; ?></h1>
+      <h1 class='text-center mb-4'>Productos del Pedido #<?php echo $id_pedido; ?></h1>
 
       <?php if (count($productos) > 0): ?>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -98,6 +98,11 @@ $productos = $stmt_productos->fetchAll(PDO::FETCH_ASSOC);
             </div>
           <?php endforeach; ?>
         </div>
+
+        <div class="text-center mt-4">
+          <a href="../cart/crearPDF.php?id=<?php echo $id_pedido; ?>" class="btn btn-primary">Exportar a PDF</a>
+        </div>
+
       <?php else: ?>
         <p class="text-center text-muted mt-4">No hay productos asociados a este pedido.</p>
       <?php endif; ?>
