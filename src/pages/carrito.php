@@ -1,17 +1,12 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 session_start();
-
 $cartCount = isset($_SESSION['cart']) ? array_sum(array_column($_SESSION['cart'], 'cantidad')) : 0;
+$user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 
-if (!isset($_SESSION['user'])) {
-  header("Location: /Proyectos/gestion_restaurante/index.php");
-  exit();
+if (!isset($user)) {
+    header("Location: /Proyectos/gestion_restaurante/index.php");
+    exit();
 }
-
-$user = $_SESSION['user'];
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Proyectos/gestion_restaurante/src/db/database_functions.php';
 ?>
@@ -25,7 +20,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Proyectos/gestion_restaurante/src/db/
   <title>Carrito de Compras</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <style>
+    <style>
     .content {
       min-height: 100vh;
     }
@@ -33,9 +28,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Proyectos/gestion_restaurante/src/db/
 </head>
 
 <body class="d-flex flex-column">
-
-<header class="container-fluid pt-3 pb-3 d-flex flex-row justify-content-center gap-4 align-items-center shadow-sm text-white"
-    style="background-color: #6a329f;">
+  <header class="container-fluid pt-3 pb-3 d-flex flex-row justify-content-center gap-4 align-items-center shadow-sm text-white" style="background-color: #6a329f;">
     <h3>Usuario: <?php echo htmlspecialchars($user['email']); ?></h3>
     <a href="/Proyectos/gestion_restaurante/src/pages/carrito.php" class="btn text-black position-relative" style="background-color: #b4a7d6;">
       <i class="bi bi-cart"></i> Carrito
@@ -47,12 +40,18 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Proyectos/gestion_restaurante/src/db/
     </a>
     <a href="/Proyectos/gestion_restaurante/src/pages/lista.php" class="btn text-black" style="background-color: #b4a7d6;">Categorías</a>
     <a href="/Proyectos/gestion_restaurante/src/pages/pedidos.php" class="btn text-black" style="background-color: #b4a7d6;">Pedidos</a>
-    <a href="/Proyectos/gestion_restaurante/src/auth/logout.php" class="btn text-black" style="background-color: #b4a7d6;">Cerrar
-      Sesión</a>
+    <a href="/Proyectos/gestion_restaurante/src/auth/logout.php" class="btn text-black" style="background-color: #b4a7d6;">Cerrar Sesión</a>
   </header>
 
   <main class="content m-auto" style="max-width: 80%; padding: 20px;">
     <h1 class="text-center mb-4">Carrito de Compras</h1>
+
+    <?php if (isset($_SESSION['pedido_message'])): ?>
+      <div class="alert alert-info text-center">
+        <?php echo $_SESSION['pedido_message']; ?>
+      </div>
+      <?php unset($_SESSION['pedido_message']); ?>
+    <?php endif; ?>
 
     <?php if (empty($_SESSION['cart'])): ?>
       <p class="text-center">No tienes productos en tu carrito.</p>
@@ -61,7 +60,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Proyectos/gestion_restaurante/src/db/
         <div class="row g-4">
           <?php
           $conn = createConnection();
-
           if ($conn === null) {
             echo "Fallo en la conexión.";
             exit();
@@ -101,31 +99,25 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Proyectos/gestion_restaurante/src/db/
               </div>";
             }
           }
-
-          echo "</div>";
           ?>
+        </div>
 
-          <div class="mt-4 text-center">
-            <a href="/Proyectos/gestion_restaurante/src/pages/proceder_pago.php" class="btn btn-success">Realizar un pedido</a>
-          </div>
+        <div class="mt-4 text-center">
+          <a href="/Proyectos/gestion_restaurante/src/cart/realizarPedido.php" class="btn btn-success" id="realizarPedido">Realizar un pedido</a>
+        </div>
 
-          <div class="mt-4 text-center">
-            <form action="/Proyectos/gestion_restaurante/src/cart/vaciarCarrito.php" method="POST">
-              <button type="submit" class="btn btn-danger">Vaciar carrito</button>
-            </form>
-          </div>
+        <div class="mt-4 text-center">
+          <form action="/Proyectos/gestion_restaurante/src/cart/vaciarCarrito.php" method="POST">
+            <button type="submit" class="btn btn-danger">Vaciar carrito</button>
+          </form>
         </div>
       </div>
     <?php endif; ?>
   </main>
 
-  <footer class="container-fluid d-flex justify-content-center align-items-center pt-3 pb-3 shadow-sm text-white"
-    style="background-color: #6a329f;">
-    <a href="https://github.com/PinkBlure" class="text-white text-decoration-none">@PinkBlure</a>
+  <footer class="container-fluid d-flex justify-content-center align-items-center pt-3 pb-3 shadow-sm text-white" style="background-color: #6a329f;">
+    <a href="https://github.com/PinkBlure" class="text-white text-decoration-none">Desarrollado por PinkBlure</a>
   </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 
 </html>

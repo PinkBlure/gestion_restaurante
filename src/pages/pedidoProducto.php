@@ -15,7 +15,6 @@ if (!isset($_SESSION['user'])) {
 $user = $_SESSION['user'];
 $cartCount = isset($_SESSION['cart']) ? array_sum(array_column($_SESSION['cart'], 'cantidad')) : 0;
 
-// Obtener el ID del pedido desde la URL
 if (!isset($_GET['id'])) {
   echo "ID del pedido no proporcionado.";
   exit();
@@ -23,7 +22,6 @@ if (!isset($_GET['id'])) {
 
 $id_pedido = htmlspecialchars($_GET['id']);
 
-// Conectar a la base de datos
 $conn = createConnection();
 
 if ($conn === null) {
@@ -31,7 +29,6 @@ if ($conn === null) {
   exit();
 }
 
-// Consultar los productos del pedido con el nombre de la categoría
 $query_productos = "
   SELECT
     p.Nombre AS NombreProducto,
