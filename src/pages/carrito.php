@@ -34,7 +34,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Proyectos/gestion_restaurante/src/db/
 
 <body class="d-flex flex-column">
 
-  <header class="container-fluid pt-3 pb-3 d-flex flex-row justify-content-center gap-4 align-items-center shadow-sm text-white"
+<header class="container-fluid pt-3 pb-3 d-flex flex-row justify-content-center gap-4 align-items-center shadow-sm text-white"
     style="background-color: #6a329f;">
     <h3>Usuario: <?php echo htmlspecialchars($user['email']); ?></h3>
     <a href="/Proyectos/gestion_restaurante/src/pages/carrito.php" class="btn text-black position-relative" style="background-color: #b4a7d6;">
@@ -46,6 +46,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Proyectos/gestion_restaurante/src/db/
       <?php endif; ?>
     </a>
     <a href="/Proyectos/gestion_restaurante/src/pages/lista.php" class="btn text-black" style="background-color: #b4a7d6;">Categorías</a>
+    <a href="/Proyectos/gestion_restaurante/src/pages/pedidos.php" class="btn text-black" style="background-color: #b4a7d6;">Pedidos</a>
     <a href="/Proyectos/gestion_restaurante/src/auth/logout.php" class="btn text-black" style="background-color: #b4a7d6;">Cerrar
       Sesión</a>
   </header>
@@ -105,7 +106,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Proyectos/gestion_restaurante/src/db/
           ?>
 
           <div class="mt-4 text-center">
-            <a href="/Proyectos/gestion_restaurante/src/pages/proceder_pago.php" class="btn btn-success">Proceder al pago</a>
+            <a href="/Proyectos/gestion_restaurante/src/pages/proceder_pago.php" class="btn btn-success">Realizar un pedido</a>
           </div>
 
           <div class="mt-4 text-center">
