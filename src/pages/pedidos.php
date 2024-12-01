@@ -15,9 +15,8 @@ if (!isset($_SESSION['user'])) {
 $cartCount = isset($_SESSION['cart']) ? array_sum(array_column($_SESSION['cart'], 'cantidad')) : 0;
 
 $user = $_SESSION['user'];
-$email_usuario = $user['email']; // Email del usuario logeado
+$email_usuario = $user['email'];
 
-// Conectar a la base de datos
 $conn = createConnection();
 
 if ($conn === null) {
@@ -25,7 +24,6 @@ if ($conn === null) {
   exit();
 }
 
-// Obtener el código del restaurante correspondiente al usuario logeado
 $query_restaurante = "SELECT Identificador FROM Restaurante WHERE Correo = :email_usuario";
 $stmt_restaurante = $conn->prepare($query_restaurante);
 $stmt_restaurante->bindParam(':email_usuario', $email_usuario, PDO::PARAM_STR);
@@ -37,9 +35,8 @@ if ($restaurante === false) {
   exit();
 }
 
-$codigo_restaurante = $restaurante['Identificador']; // Código del restaurante
+$codigo_restaurante = $restaurante['Identificador'];
 
-// Obtener los pedidos del restaurante asociado al usuario logeado
 $query_pedidos = "SELECT * FROM Pedido WHERE restaurante = :codigo_restaurante ORDER BY FechaPedido DESC";
 $stmt_pedidos = $conn->prepare($query_pedidos);
 $stmt_pedidos->bindParam(':codigo_restaurante', $codigo_restaurante, PDO::PARAM_STR);
@@ -92,7 +89,7 @@ $pedidos = $stmt_pedidos->fetchAll(PDO::FETCH_ASSOC);
                   <h5 class="card-title text-dark">Pedido #<?php echo htmlspecialchars($pedido['Codigo']); ?></h5>
                   <p class="card-subtitle mb-2 text-muted">Fecha: <?php echo htmlspecialchars($pedido['FechaPedido']); ?></p>
                   <p class="card-text text-dark">Estado: <?php echo htmlspecialchars($pedido['EstadoEnvio']); ?></p>
-                  <a href="detalle_pedido.php?id=<?php echo htmlspecialchars($pedido['Codigo']); ?>" class="btn btn-primary">Ver detalles</a>
+                  <a href="pedidoProducto.php?id=<?php echo htmlspecialchars($pedido['Codigo']); ?>" class="btn btn-primary">Ver detalles</a>
                 </div>
               </div>
             </div>
