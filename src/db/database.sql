@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 25-11-2024 a las 00:51:56
+-- Tiempo de generación: 01-12-2024 a las 21:39:04
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -26,12 +26,15 @@ USE `gestionpedidos`;
 --
 
 DROP TABLE IF EXISTS `Categoria`;
-CREATE TABLE IF NOT EXISTS `Categoria` (
-  `Codigo` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `Categoria` (
+  `Codigo` int(11) NOT NULL,
   `Nombre` varchar(100) NOT NULL,
-  `Descripcion` text NOT NULL,
-  PRIMARY KEY (`Codigo`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Descripcion` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `Categoria`:
+--
 
 --
 -- Volcado de datos para la tabla `Categoria`
@@ -55,17 +58,35 @@ INSERT INTO `Categoria` (`Codigo`, `Nombre`, `Descripcion`) VALUES
 -- Estructura de tabla para la tabla `Pedido`
 --
 -- Creación: 21-11-2024 a las 21:14:22
+-- Última actualización: 01-12-2024 a las 20:35:46
 --
 
 DROP TABLE IF EXISTS `Pedido`;
-CREATE TABLE IF NOT EXISTS `Pedido` (
-  `Codigo` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `Pedido` (
+  `Codigo` int(11) NOT NULL,
   `FechaPedido` date NOT NULL,
   `EstadoEnvio` tinyint(1) NOT NULL,
-  `Restaurante` int(11) NOT NULL,
-  PRIMARY KEY (`Codigo`),
-  KEY `fk_restaurante` (`Restaurante`)
+  `Restaurante` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `Pedido`:
+--   `Restaurante`
+--       `Restaurante` -> `Identificador`
+--
+
+--
+-- Volcado de datos para la tabla `Pedido`
+--
+
+INSERT INTO `Pedido` (`Codigo`, `FechaPedido`, `EstadoEnvio`, `Restaurante`) VALUES
+(1, '2024-12-01', 0, 1),
+(2, '2024-12-01', 1, 1),
+(3, '2024-12-02', 2, 1),
+(8, '2024-12-01', 0, 1),
+(9, '2024-12-01', 0, 1),
+(10, '2024-12-01', 0, 1),
+(11, '2024-12-01', 0, 1);
 
 -- --------------------------------------------------------
 
@@ -73,18 +94,45 @@ CREATE TABLE IF NOT EXISTS `Pedido` (
 -- Estructura de tabla para la tabla `PedidoProducto`
 --
 -- Creación: 21-11-2024 a las 21:14:22
+-- Última actualización: 01-12-2024 a las 20:35:46
 --
 
 DROP TABLE IF EXISTS `PedidoProducto`;
-CREATE TABLE IF NOT EXISTS `PedidoProducto` (
-  `Codigo` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `PedidoProducto` (
+  `Codigo` int(11) NOT NULL,
   `Cantidad` int(11) NOT NULL,
   `Pedido` int(11) NOT NULL,
-  `Producto` int(11) NOT NULL,
-  PRIMARY KEY (`Codigo`),
-  KEY `fk_pedido_producto` (`Pedido`),
-  KEY `fk_producto_pedido` (`Producto`)
+  `Producto` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `PedidoProducto`:
+--   `Pedido`
+--       `Pedido` -> `Codigo`
+--   `Producto`
+--       `Producto` -> `Codigo`
+--
+
+--
+-- Volcado de datos para la tabla `PedidoProducto`
+--
+
+INSERT INTO `PedidoProducto` (`Codigo`, `Cantidad`, `Pedido`, `Producto`) VALUES
+(1, 2, 1, 1),
+(2, 1, 1, 2),
+(3, 3, 1, 3),
+(4, 4, 2, 11),
+(5, 2, 2, 12),
+(6, 1, 2, 13),
+(7, 1, 3, 15),
+(8, 3, 3, 16),
+(9, 2, 3, 18),
+(21, 2, 8, 1),
+(22, 2, 9, 51),
+(23, 5, 9, 53),
+(24, 5, 10, 5),
+(25, 5, 11, 71),
+(26, 10, 11, 73);
 
 -- --------------------------------------------------------
 
@@ -92,31 +140,35 @@ CREATE TABLE IF NOT EXISTS `PedidoProducto` (
 -- Estructura de tabla para la tabla `Producto`
 --
 -- Creación: 21-11-2024 a las 21:14:22
--- Última actualización: 24-11-2024 a las 23:41:36
+-- Última actualización: 01-12-2024 a las 20:35:07
 --
 
 DROP TABLE IF EXISTS `Producto`;
-CREATE TABLE IF NOT EXISTS `Producto` (
-  `Codigo` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `Producto` (
+  `Codigo` int(11) NOT NULL,
   `Nombre` varchar(100) NOT NULL,
   `Descripcion` text NOT NULL,
   `Peso` int(11) NOT NULL,
   `CantidadStock` int(11) NOT NULL,
-  `Categoria` int(11) NOT NULL,
-  PRIMARY KEY (`Codigo`),
-  KEY `fk_categoria` (`Categoria`)
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Categoria` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `Producto`:
+--   `Categoria`
+--       `Categoria` -> `Codigo`
+--
 
 --
 -- Volcado de datos para la tabla `Producto`
 --
 
 INSERT INTO `Producto` (`Codigo`, `Nombre`, `Descripcion`, `Peso`, `CantidadStock`, `Categoria`) VALUES
-(1, 'Ensalada Mixta', 'Ensalada fresca con tomate, lechuga y cebolla', 150, 22, 1),
+(1, 'Ensalada Mixta', 'Ensalada fresca con tomate, lechuga y cebolla', 150, 20, 1),
 (2, 'Sopa de Tomate', 'Sopa cremosa de tomate con albahaca', 200, 30, 1),
 (3, 'Bruschetta', 'Pan tostado con tomate, albahaca y aceite de oliva', 100, 15, 1),
 (4, 'Tartar de Atún', 'Tartar de atún fresco con aguacate', 120, 10, 1),
-(5, 'Croquetas de Jamón', 'Croquetas rellenas de jamón serrano y bechamel', 50, 50, 1),
+(5, 'Croquetas de Jamón', 'Croquetas rellenas de jamón serrano y bechamel', 50, 45, 1),
 (6, 'Aceitunas Variadas', 'Aceitunas de diferentes tipos, servidas con aceite de oliva', 100, 25, 1),
 (7, 'Ceviche de Pescado', 'Pescado fresco marinado con limón, cebolla y cilantro', 150, 10, 1),
 (8, 'Pimientos de Padrón', 'Pimientos fritos con sal marina', 120, 30, 1),
@@ -142,10 +194,10 @@ INSERT INTO `Producto` (`Codigo`, `Nombre`, `Descripcion`, `Peso`, `CantidadStoc
 (28, 'Cheesecake de Frambuesa', 'Cheesecake con capa de frambuesa', 200, 15, 3),
 (29, 'Panna Cotta', 'Panna cotta con coulis de frutas del bosque', 120, 40, 3),
 (30, 'Pastel de Chocolate', 'Pastel de chocolate con cobertura de crema', 250, 30, 3),
-(31, 'Cerveza Lager', 'Cerveza Lager fría', 330, 100, 4),
-(32, 'Vino Tinto', 'Vino tinto seco de la región', 750, 50, 4),
-(33, 'Refresco de Cola', 'Refresco de cola con burbujas', 500, 150, 4),
-(34, 'Jugo de Naranja', 'Jugo fresco de naranja natural', 300, 80, 4),
+(31, 'Cerveza Lager', 'Cerveza Lager fría', 330, 60, 4),
+(32, 'Vino Tinto', 'Vino tinto seco de la región', 750, 30, 4),
+(33, 'Refresco de Cola', 'Refresco de cola con burbujas', 500, 145, 4),
+(34, 'Jugo de Naranja', 'Jugo fresco de naranja natural', 300, 75, 4),
 (35, 'Agua Mineral', 'Agua mineral embotellada', 500, 200, 4),
 (36, 'Café Espresso', 'Café espresso recién hecho', 100, 70, 4),
 (37, 'Café con Leche', 'Café con leche caliente', 200, 60, 4),
@@ -162,9 +214,9 @@ INSERT INTO `Producto` (`Codigo`, `Nombre`, `Descripcion`, `Peso`, `CantidadStoc
 (48, 'Ensalada de Garbanzos', 'Ensalada con garbanzos, tomate y pepino', 200, 40, 5),
 (49, 'Ensalada de Aguacate', 'Ensalada con aguacate, tomate y cebolla morada', 180, 50, 5),
 (50, 'Ensalada Vegana', 'Ensalada con vegetales frescos, aguacate y semillas', 250, 60, 5),
-(51, 'Sopa de Lentejas', 'Sopa de lentejas con zanahorias y apio', 300, 42, 6),
+(51, 'Sopa de Lentejas', 'Sopa de lentejas con zanahorias y apio', 300, 40, 6),
 (52, 'Sopa de Pollo', 'Sopa de pollo con fideos y zanahorias', 250, 50, 6),
-(53, 'Sopa de Calabaza', 'Sopa cremosa de calabaza con especias', 200, 35, 6),
+(53, 'Sopa de Calabaza', 'Sopa cremosa de calabaza con especias', 200, 30, 6),
 (54, 'Sopa de Mariscos', 'Sopa con mariscos y caldo de pescado', 250, 20, 6),
 (55, 'Crema de Espárragos', 'Crema suave de espárragos', 180, 30, 6),
 (56, 'Sopa de Acelga', 'Sopa de acelga con patatas y cebolla', 250, 40, 6),
@@ -182,9 +234,9 @@ INSERT INTO `Producto` (`Codigo`, `Nombre`, `Descripcion`, `Peso`, `CantidadStoc
 (68, 'Salmón Ahumado', 'Salmón ahumado con cebolla morada y alcaparras', 120, 50, 7),
 (69, 'Pescado a la Veracruzana', 'Pescado con tomate, aceitunas y alcaparras', 250, 20, 7),
 (70, 'Pez Espada a la Parrilla', 'Pez espada a la parrilla con salsa de hierbas', 200, 30, 7),
-(71, 'Filete de Res', 'Filete de res a la parrilla con papas fritas', 300, 20, 8),
+(71, 'Filete de Res', 'Filete de res a la parrilla con papas fritas', 300, 15, 8),
 (72, 'Costillas a la Barbacoa', 'Costillas de cerdo con salsa barbacoa', 350, 25, 8),
-(73, 'Pechuga de Pollo', 'Pechuga de pollo a la parrilla', 200, 30, 8),
+(73, 'Pechuga de Pollo', 'Pechuga de pollo a la parrilla', 200, 20, 8),
 (74, 'Entrecot', 'Entrecot de res a la parrilla con vegetales', 250, 15, 8),
 (75, 'Pollo al Ajillo', 'Pollo al ajillo con arroz y ensalada', 300, 20, 8),
 (76, 'Hamburguesa de Pollo', 'Hamburguesa de pollo con lechuga, tomate y mayonesa', 220, 35, 8),
@@ -219,18 +271,30 @@ INSERT INTO `Producto` (`Codigo`, `Nombre`, `Descripcion`, `Peso`, `CantidadStoc
 -- Estructura de tabla para la tabla `Restaurante`
 --
 -- Creación: 21-11-2024 a las 21:14:22
+-- Última actualización: 01-12-2024 a las 18:36:36
 --
 
 DROP TABLE IF EXISTS `Restaurante`;
-CREATE TABLE IF NOT EXISTS `Restaurante` (
-  `Identificador` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `Restaurante` (
+  `Identificador` int(11) NOT NULL,
   `Correo` varchar(100) NOT NULL,
   `Clave` varchar(10) NOT NULL,
   `Pais` enum('Afganistán','Albania','Argelia','Samoa Americana','Andorra','Angola','Anguilla','Antártida','Antigua y Barbuda','Argentina','Armenia','Aruba','Australia','Austria','Azerbaiyán','Bahamas','Baréin','Bangladesh','Barbados','Bielorrusia','Bélgica','Belice','Benín','Bermudas','Bután','Bolivia','Bosnia-Herzegovina','Botsuana','Brasil','Brunei Darussalam','Bulgaria','Burkina Faso','Burundi','Camboya','Camerún','Canadá','Cabo Verde','Islas Caimán','República Centroafricana','Chad','Chile','China','Isla de Navidad, Isla Christmas','Islas Cocos','Colombia','Comores','República Democrática del Congo','República del Congo','Islas Cook','Costa Rica','Costa de Marfil','Croacia','Cuba','Chipre','República Checa','Dinamarca','Djibouti, Yibuti','Dominica','República Dominicana','Ecuador','Egipto','El Salvador','Guinea Ecuatorial','Eritrea','Estonia','Etiopía','Islas Malvinas','Islas Feroe','Fiyi','Finlandia','Francia','Guayana Francesa','Polinesia Francesa','Gabón','Gambia','Georgia','Alemania','Ghana','Gibraltar','Grecia','Groenlandia','Granada','Guadalupe','Guam','Guatemala','Guinea','Guinea-Bisáu','Guyana','Haití','Honduras','Hong Kong','Hungría','Islandia','India','Indonesia','Irán','Iraq','Irlanda','Israel','Italia','Jamaica','Japón','Jordania','Kazajstán','Kenia','Kiribati','Corea del Norte','Corea del Sur','Kosovo','Kuwait','Kirguistán','Laos; oficialmente: República Democrática Popular Lao','Letonia','Líbano','Lesotho','Liberia','Libia','Liechtenstein','Lituania','Luxemburgo','Macao','Macedonia del Norte','Madagascar','Malawi','Malasia','Maldivas','Malí','Malta','Islas Marshall','Martinica','Mauritania','Mauricio','Mayotte','México','Micronesia, Estados Federados de','Moldavia','Mónaco','Mongolia','Montenegro','Montserrat','Marruecos','Mozambique','Myanmar, Birmania','Namibia','Nauru','Nepal','Países Bajos, Holanda','Antillas Holandesas','Nueva Caledonia','Nueva Zelanda','Nicaragua','Níger','Nigeria','Niue','Islas Marianas del Norte','Noruega','Omán','Pakistán','Palau','Palestina','Panamá','Papúa Nueva Guinea','Paraguay','Perú','Filipinas','Isla Pitcairn','Polonia','Portugal','Puerto Rico','Qatar','Reunión','Rumanía','Rusia','Ruanda','San Cristóbal y Nieves','Santa Lucía','San Vicente y las Granadinas','Samoa','San Marino','Santo Tomé y Príncipe','Arabia Saudita','Senegal','Serbia','Seychelles','Sierra Leona','Singapur','Eslovaquia','Eslovenia','Islas Salomón','Somalia','Sudáfrica','Sudán del Sur','España','Sri Lanka','Sudán','Surinam','Suazilandia, Esuatini','Suecia','Suiza','Siria','Taiwán (República de China)','Tayikistán','Tanzania','Tailandia','Tíbet','Timor Oriental','Togo','Tokelau','Tonga','Trinidad y Tobago','Túnez','Turquía','Turkmenistán','Islas Turcas y Caicos','Tuvalu','Uganda','Ucrania','Emiratos Árabes Unidos','Reino Unido','Estados Unidos','Uruguay','Uzbekistán','Vanuatu','Ciudad del Vaticano','Venezuela','Vietnam','Islas Virgenes Británicas','Islas Vírgenes de los Estados Unidos','Wallis y Futuna','Sáhara Occidental','Yemen','Zambia','Zimbabwe') NOT NULL,
   `Direccion` varchar(100) NOT NULL,
-  `CodigoPostal` varchar(20) NOT NULL,
-  PRIMARY KEY (`Identificador`)
+  `CodigoPostal` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `Restaurante`:
+--
+
+--
+-- Volcado de datos para la tabla `Restaurante`
+--
+
+INSERT INTO `Restaurante` (`Identificador`, `Correo`, `Clave`, `Pais`, `Direccion`, `CodigoPostal`) VALUES
+(1, 'restaurante1@example.com', '1234', 'España', 'Calle Falsa 123', '28001'),
+(2, 'restaurante2@example.com', 'abcd', 'México', 'Avenida Reforma 456', '01000');
 
 -- --------------------------------------------------------
 
@@ -241,14 +305,16 @@ CREATE TABLE IF NOT EXISTS `Restaurante` (
 --
 
 DROP TABLE IF EXISTS `usuarios`;
-CREATE TABLE IF NOT EXISTS `usuarios` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `usuarios` (
+  `id` int(11) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `codigo` varchar(10) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `codigo` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- RELACIONES PARA LA TABLA `usuarios`:
+--
 
 --
 -- Volcado de datos para la tabla `usuarios`
@@ -257,6 +323,91 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 INSERT INTO `usuarios` (`id`, `email`, `password`, `codigo`) VALUES
 (1, 'restaurante1@example.com', '81dc9bdb52d04dc20036dbd8313ed055', 'R001'),
 (2, 'restaurante2@example.com', 'e2fc714c4727ee9395f324cd2e7f331f', 'R002');
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `Categoria`
+--
+ALTER TABLE `Categoria`
+  ADD PRIMARY KEY (`Codigo`);
+
+--
+-- Indices de la tabla `Pedido`
+--
+ALTER TABLE `Pedido`
+  ADD PRIMARY KEY (`Codigo`),
+  ADD KEY `fk_restaurante` (`Restaurante`);
+
+--
+-- Indices de la tabla `PedidoProducto`
+--
+ALTER TABLE `PedidoProducto`
+  ADD PRIMARY KEY (`Codigo`),
+  ADD KEY `fk_pedido_producto` (`Pedido`),
+  ADD KEY `fk_producto_pedido` (`Producto`);
+
+--
+-- Indices de la tabla `Producto`
+--
+ALTER TABLE `Producto`
+  ADD PRIMARY KEY (`Codigo`),
+  ADD KEY `fk_categoria` (`Categoria`);
+
+--
+-- Indices de la tabla `Restaurante`
+--
+ALTER TABLE `Restaurante`
+  ADD PRIMARY KEY (`Identificador`);
+
+--
+-- Indices de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `Categoria`
+--
+ALTER TABLE `Categoria`
+  MODIFY `Codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT de la tabla `Pedido`
+--
+ALTER TABLE `Pedido`
+  MODIFY `Codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT de la tabla `PedidoProducto`
+--
+ALTER TABLE `PedidoProducto`
+  MODIFY `Codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+
+--
+-- AUTO_INCREMENT de la tabla `Producto`
+--
+ALTER TABLE `Producto`
+  MODIFY `Codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+
+--
+-- AUTO_INCREMENT de la tabla `Restaurante`
+--
+ALTER TABLE `Restaurante`
+  MODIFY `Identificador` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas
