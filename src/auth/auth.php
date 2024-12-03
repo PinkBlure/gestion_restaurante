@@ -27,7 +27,13 @@ try {
       'email' => $usuario['email'],
       'codigo' => $usuario['codigo']
     ];
-    $_SESSION['cart'] = [];
+
+    if (isset($_COOKIE['cart'])) {
+      $_SESSION['cart'] = json_decode($_COOKIE['cart'], true);
+    } else {
+      $_SESSION['cart'] = [];
+    }
+
     header("Location: /Proyectos/gestion_restaurante/src/pages/lista.php");
     exit();
   } else {
